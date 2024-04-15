@@ -27,7 +27,7 @@ class BookController {
         const newBook = req.body; // post for mongoose
         try {
             const foundAuthor = await author.findById(newBook.author);
-            const completeBook = {...newBook, author: {...foundAuthor._doc}};
+            const completeBook = { ...newBook, author: { ...foundAuthor._doc } };
             const createBook = await book.create(completeBook);
             res.status(201).json({ message: "created successfully", book: newBook });
         } catch (error) {
@@ -52,6 +52,16 @@ class BookController {
             res.status(200).json({ message: "book deleted!" }); // method json to parse moire complex objects
         } catch (error) {
             res.status(500).json({ message: `${error.message} - fail to delete the book` });
+        }
+    };
+    // find a book by publisher - Get find
+    static async searchBookByPublisher(req, res) {
+        const publisher = req.query.publisher;
+        try {
+            const booksByPublisher = await book.find({ publisher: publisher });
+            res.status(200).json(booksByPublisher);
+        } catch (error) {
+            res.status(500).json({ message: `${error.message} - fail to search` });
         }
     };
 };
