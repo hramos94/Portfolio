@@ -1,3 +1,4 @@
+import { author } from "../models/author.js";
 import book from "../models/book.js";
 
 class BookController {
@@ -23,14 +24,17 @@ class BookController {
     };
     // register a book - POST
     static async registerBook(req, res) {
+        const newBook = req.body; // post for mongoose
         try {
-            const newBook = await book.create(req.body); // post for mongoose
+            const foundAuthor = await author.findById(newBook.author);
+            const completeBook = {...newBook, author: {...foundAuthor._doc}};
+            const createBook = await book.create(completeBook);
             res.status(201).json({ message: "created successfully", book: newBook });
         } catch (error) {
             res.status(500).json({ message: `${error.message} - failed to register book` })
         }
     };
-
+    // update a book - PUT
     static async updateBook(req, res) {
         try {
             const id = req.params.id;
@@ -40,6 +44,7 @@ class BookController {
             res.status(500).json({ message: `${error.message} - fail to update the book` });
         }
     };
+    // delete a book - DELETE
     static async deleteBook(req, res) {
         try {
             const id = req.params.id;
