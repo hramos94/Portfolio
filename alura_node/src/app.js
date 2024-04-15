@@ -1,28 +1,19 @@
 import express from 'express';
-import conectaNaDatabase from './config/dbConnect.js';
-import livro from './models/livro.js';
+import connectDatabase from './config/dbConnect.js';
+import routes from './routes/index.js';
 
-const conexao = await conectaNaDatabase();
+const connection = await connectDatabase();
 
-conexao.on("error", (erro) => {
-    console.error("erro de conexao", erro);
+connection.on("error", (erro) => {
+    console.error("erro de connection", erro);
 });
 
-conexao.once("open", ()=>{
-    console.log("conexao com o banco feita com sucesso");
+connection.once("open", ()=>{
+    console.log("connection with db success");
 });
 
 const app = express();
-app.use(express.json()); // middleware, parses strings (from body), to json
-
-app.get("/", (req, res) => {
-    res.status(200).send("curso de node.js"); // o metodo send é para dados mais simples, nao objetos tipo livros
-});
-
-app.get("/livros", async (req, res) => {
-    const listaLivros = await livro.find({});
-    res.status(200).json(listaLivros); // metodo json para objetos mais complexos
-});
+routes(app);
 
 app.get("/livros/:id", (req, res) => { //:id é como avisar pro express que é uma variavel
     const index = buscaLivro(req.params.id);
