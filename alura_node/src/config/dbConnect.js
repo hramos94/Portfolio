@@ -6,4 +6,3 @@ async function connectDatabase() {
 };
 
 export default connectDatabase;
-
